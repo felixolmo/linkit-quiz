@@ -13,7 +13,7 @@ type Q = {
 };
 
 const QUESTIONS: Q[] = [
-  { id: "goal", label: "What is your primary goal?", type: "choice", options: ["Generate leads", "Sell online", "Increase organic traffic", "Improve brand presence", "Automate processes/CRM"] },
+  { id: "goal", label: "What is your primary goal?", type: "choice", options: ["Generate leads", "Sell online", "Increase organic traffic", "Google Ranking", "Improve brand presence", "Automate processes/CRM"] },
   { id: "website", label: "Do you currently have a website?", type: "choice", options: ["Yes, WordPress", "Yes, Shopify", "Yes, custom", "Yes, not sure", "No"] },
   { id: "traffic", label: "Approximate monthly traffic?", type: "choice", options: ["Under 1k", "1k–5k", "5k–20k", "20k+"] },
   { id: "adSpend", label: "Monthly ad spend?", type: "choice", options: ["None", "Under $1,000", "$1,000–$3,000", "$3,000–$10,000", "Over $10,000"] },
@@ -146,8 +146,8 @@ export default function Quiz() {
         <div className="relative p-6 border-b">
           <div className="flex items-center justify-between">
             <div className="text-sm font-medium text-[#306f98]">Question {step + 1} of {QUESTIONS.length}</div>
-            <div className="relative h-14 w-14 rounded-full ring-2 ring-[#306f98] overflow-hidden bg-white">
-              <Image src={logo} alt="Linkit Digital Logo" fill className="object-contain p-1" sizes="56px" priority />
+            <div className="h-14 w-14 ring-2 ring-[#306f98] bg-white rounded-full overflow-hidden relative">
+              <Image src={logo} alt="Linkit Digital Logo" fill className="object-contain p-2" priority />
             </div>
           </div>
           <div className="mt-4 flex items-center gap-3">

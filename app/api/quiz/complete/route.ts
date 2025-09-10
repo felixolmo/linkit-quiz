@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     });
   }
 
-  if (goal === "Increase organic traffic" && (traffic === "Under 1k" || traffic === "1k–5k")) {
+  if (goal === "Increase organic traffic" || goal === "Google Ranking") {
     return NextResponse.json({
       path: "seo_growth",
       summary: [
