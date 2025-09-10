@@ -43,7 +43,10 @@ export default function Quiz() {
   const current = QUESTIONS[step];
   const progress = useMemo(() => Math.round((step / QUESTIONS.length) * 100), [step]);
 
-  function onSelect(value: string) { setAnswers((a) => ({ ...a, [current.id]: value })); }
+  function onSelect(value: string) {
+    setAnswers((a) => ({ ...a, [current.id]: value }));
+  }
+
   function onText(value: string) {
     setAnswers((a) => ({ ...a, [current.id]: value }));
     if (current.id === "name") setLead((l) => ({ ...l, name: value }));
@@ -53,27 +56,41 @@ export default function Quiz() {
 
   useEffect(() => {
     const h = document.documentElement.scrollHeight || document.body.scrollHeight;
-    try { window.parent.postMessage({ type: "QUIZ_HEIGHT", height: h }, "*"); } catch {}
+    try {
+      window.parent.postMessage({ type: "QUIZ_HEIGHT", height: h }, "*");
+    } catch {}
   }, [step, result]);
 
   async function next() {
     if (!answers[current.id]) return;
-    if (step < QUESTIONS.length - 1) setStep((s) => s + 1);
-    else {
+    if (step < QUESTIONS.length - 1) {
+      setStep((s) => s + 1);
+    } else {
       setSubmitting(true);
-      const res = await fetch("/api/quiz/complete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ answers }) });
+      const res = await fetch("/api/quiz/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers })
+      });
       const data = await res.json();
       setResult(data);
       setSubmitting(false);
     }
   }
-  function back() { if (step > 0) setStep((s) => s - 1); }
+
+  function back() {
+    if (step > 0) setStep((s) => s - 1);
+  }
 
   async function submitLead() {
     const parse = LeadSchema.safeParse(lead);
     if (!parse.success) return;
     setSubmitting(true);
-    await fetch("/api/leads", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ answers, result, lead }) });
+    await fetch("/api/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ answers, result, lead })
+    });
     setSubmitting(false);
     setResult({ path: result?.path || "submitted", summary: ["Thanks. A specialist will contact you shortly."] });
   }
@@ -144,44 +161,45 @@ export default function Quiz() {
         <div className="p-6 md:p-10">
           <h1 className="text-3xl md:text-4xl font-semibold text-center text-[#306f98]">{current.label}</h1>
 
-        {current.type === "choice" && (
-          <div className="mt-8 grid gap-4">
-            {current.options!.map((opt) => {
-              const active = answers[current.id] === opt;
-              return (
-                <button
-                  key={opt}
-                  onClick={() => onSelect(opt)}
-                  className={`rounded-full px-6 py-4 border-2 text-lg transition ${active ? "border-[#306f98] bg-[#306f98]/10" : "border-neutral-300 hover:border-neutral-500"}`}
-                >
-                  {opt}
-                </button>
-              );
-            })}
+          {current.type === "choice" && (
+            <div className="mt-8 grid gap-4">
+              {current.options!.map((opt) => {
+                const active = answers[current.id] === opt;
+                return (
+                  <button
+                    key={opt}
+                    onClick={() => onSelect(opt)}
+                    className={`rounded-full px-6 py-4 border-2 text-lg transition ${active ? "border-[#306f98] bg-[#306f98]/10" : "border-neutral-300 hover:border-neutral-500"}`}
+                  >
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {current.type === "text" && (
+            <div className="mt-8">
+              <input
+                className="w-full rounded-xl border px-4 py-3 text-lg"
+                placeholder="Type your answer"
+                value={answers[current.id] || ""}
+                onChange={(e) => onText(e.target.value)}
+              />
+            </div>
+          )}
+
+          <div className="mt-10 flex items-center justify-between">
+            <button onClick={back} className="rounded-xl border px-5 py-3">Back</button>
+            <button onClick={next} disabled={!answers[current.id] || submitting} className="rounded-xl bg-[#306f98] px-6 py-3 text-white">
+              {step === QUESTIONS.length - 1 ? "See results" : "Continue"}
+            </button>
           </div>
-        )}
 
-        {current.type === "text" && (
-          <div className="mt-8">
-            <input
-              className="w-full rounded-xl border px-4 py-3 text-lg"
-              placeholder="Type your answer"
-              value={answers[current.id] || ""}
-              onChange={(e) => onText(e.target.value)}
-            />
+          <div className="mt-8 flex items-center gap-3 rounded-xl border px-4 py-3 text-sm text-[#306f98]">
+            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100">💼</span>
+            <span>You’ll receive a proposal aligned to your goals and budget.</span>
           </div>
-        )}
-
-        <div className="mt-10 flex items-center justify-between">
-          <button onClick={back} className="rounded-xl border px-5 py-3">Back</button>
-          <button onClick={next} disabled={!answers[current.id] || submitting} className="rounded-xl bg-[#306f98] px-6 py-3 text-white">
-            {step === QUESTIONS.length - 1 ? "See results" : "Continue"}
-          </button>
-        </div>
-
-        <div className="mt-8 flex items-center gap-3 rounded-xl border px-4 py-3 text-sm text-[#306f98]">
-          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100">💼</span>
-          <span>You’ll receive a proposal aligned to your goals and budget.</span>
         </div>
       </div>
     </div>
