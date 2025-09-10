@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Content-Security-Policy",
-            value: "frame-ancestors 'self' https://linkit.digital https://www.linkit.digital"
+            value: "frame-ancestors 'self' https://linkit.digital https://www.linkit.digital https://*.linkit.digital"
           }
         ]
       }
