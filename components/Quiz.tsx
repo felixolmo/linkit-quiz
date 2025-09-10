@@ -133,8 +133,8 @@ export default function Quiz() {
         <div className="relative p-6 border-b">
           <div className="flex items-center justify-between">
             <div className="text-sm font-medium text-[#306f98]">Question {step + 1} of {QUESTIONS.length}</div>
-            <div className="relative h-14 w-14 rounded-full ring-2 ring-[#306f98] overflow-hidden bg-[#306f98]/10">
-              <Image src="/quiz-avatar.png" alt="Advisor" fill className="object-cover scale-[1.2]" sizes="56px" priority />
+            <div className="relative h-14 w-14 rounded-full ring-2 ring-[#306f98] overflow-hidden bg-white">
+              <Image src="/linkit-logo.png" alt="Linkit Digital Logo" fill className="object-contain" sizes="56px" priority />
             </div>
           </div>
           <div className="mt-4 flex items-center gap-3">
