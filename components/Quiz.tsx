@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import Image from "next/image";
+import logo from "@/public/linkit-logo.png";
 
 type Q = {
   id: string;
@@ -42,9 +43,7 @@ export default function Quiz() {
   const current = QUESTIONS[step];
   const progress = useMemo(() => Math.round((step / QUESTIONS.length) * 100), [step]);
 
-  function onSelect(value: string) {
-    setAnswers((a) => ({ ...a, [current.id]: value }));
-  }
+  function onSelect(value: string) { setAnswers((a) => ({ ...a, [current.id]: value })); }
   function onText(value: string) {
     setAnswers((a) => ({ ...a, [current.id]: value }));
     if (current.id === "name") setLead((l) => ({ ...l, name: value }));
@@ -59,9 +58,8 @@ export default function Quiz() {
 
   async function next() {
     if (!answers[current.id]) return;
-    if (step < QUESTIONS.length - 1) {
-      setStep((s) => s + 1);
-    } else {
+    if (step < QUESTIONS.length - 1) setStep((s) => s + 1);
+    else {
       setSubmitting(true);
       const res = await fetch("/api/quiz/complete", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ answers }) });
       const data = await res.json();
@@ -69,9 +67,7 @@ export default function Quiz() {
       setSubmitting(false);
     }
   }
-  function back() {
-    if (step > 0) setStep((s) => s - 1);
-  }
+  function back() { if (step > 0) setStep((s) => s - 1); }
 
   async function submitLead() {
     const parse = LeadSchema.safeParse(lead);
@@ -134,7 +130,7 @@ export default function Quiz() {
           <div className="flex items-center justify-between">
             <div className="text-sm font-medium text-[#306f98]">Question {step + 1} of {QUESTIONS.length}</div>
             <div className="relative h-14 w-14 rounded-full ring-2 ring-[#306f98] overflow-hidden bg-white">
-              <Image src="/linkit-logo.png" alt="Linkit Digital Logo" fill className="object-contain" sizes="56px" priority />
+              <Image src={logo} alt="Linkit Digital Logo" fill className="object-contain p-1" sizes="56px" priority />
             </div>
           </div>
           <div className="mt-4 flex items-center gap-3">
@@ -148,45 +144,44 @@ export default function Quiz() {
         <div className="p-6 md:p-10">
           <h1 className="text-3xl md:text-4xl font-semibold text-center text-[#306f98]">{current.label}</h1>
 
-          {current.type === "choice" && (
-            <div className="mt-8 grid gap-4">
-              {current.options!.map((opt) => {
-                const active = answers[current.id] === opt;
-                return (
-                  <button
-                    key={opt}
-                    onClick={() => onSelect(opt)}
-                    className={`rounded-full px-6 py-4 border-2 text-lg transition ${active ? "border-[#306f98] bg-[#306f98]/10" : "border-neutral-300 hover:border-neutral-500"}`}
-                  >
-                    {opt}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-
-          {current.type === "text" && (
-            <div className="mt-8">
-              <input
-                className="w-full rounded-xl border px-4 py-3 text-lg"
-                placeholder="Type your answer"
-                value={answers[current.id] || ""}
-                onChange={(e) => onText(e.target.value)}
-              />
-            </div>
-          )}
-
-          <div className="mt-10 flex items-center justify-between">
-            <button onClick={back} className="rounded-xl border px-5 py-3">Back</button>
-            <button onClick={next} disabled={!answers[current.id] || submitting} className="rounded-xl bg-[#306f98] px-6 py-3 text-white">
-              {step === QUESTIONS.length - 1 ? "See results" : "Continue"}
-            </button>
+        {current.type === "choice" && (
+          <div className="mt-8 grid gap-4">
+            {current.options!.map((opt) => {
+              const active = answers[current.id] === opt;
+              return (
+                <button
+                  key={opt}
+                  onClick={() => onSelect(opt)}
+                  className={`rounded-full px-6 py-4 border-2 text-lg transition ${active ? "border-[#306f98] bg-[#306f98]/10" : "border-neutral-300 hover:border-neutral-500"}`}
+                >
+                  {opt}
+                </button>
+              );
+            })}
           </div>
+        )}
 
-          <div className="mt-8 flex items-center gap-3 rounded-xl border px-4 py-3 text-sm text-[#306f98]">
-            <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100">💼</span>
-            <span>You’ll receive a proposal aligned to your goals and budget.</span>
+        {current.type === "text" && (
+          <div className="mt-8">
+            <input
+              className="w-full rounded-xl border px-4 py-3 text-lg"
+              placeholder="Type your answer"
+              value={answers[current.id] || ""}
+              onChange={(e) => onText(e.target.value)}
+            />
           </div>
+        )}
+
+        <div className="mt-10 flex items-center justify-between">
+          <button onClick={back} className="rounded-xl border px-5 py-3">Back</button>
+          <button onClick={next} disabled={!answers[current.id] || submitting} className="rounded-xl bg-[#306f98] px-6 py-3 text-white">
+            {step === QUESTIONS.length - 1 ? "See results" : "Continue"}
+          </button>
+        </div>
+
+        <div className="mt-8 flex items-center gap-3 rounded-xl border px-4 py-3 text-sm text-[#306f98]">
+          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100">💼</span>
+          <span>You’ll receive a proposal aligned to your goals and budget.</span>
         </div>
       </div>
     </div>
